@@ -9,7 +9,7 @@ response = requests.get(url)
 
 print('Calendar data received.')
 
-fixed = response.text('&amp;', '&').replace("’","'")
+fixed = response.text.replace('&amp;', '&').replace("’","'")
 soup = BeautifulSoup(response.text, 'html.parser')
 
 calendar_items = soup.find_all(class_='icrt-calendarListItem')
