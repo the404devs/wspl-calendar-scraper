@@ -28,6 +28,10 @@ jobs:
 
       - name: Run the script
         run: python super-scraper.py
+        
+      - name: Calculate SHA256 sum
+        id: sha256sum
+        run: echo "::set-output name=sha256::$(sha256sum WSPL_Events.ics | awk '{print $1}')"
 
       - name: Create release
         id: create_release
@@ -40,7 +44,7 @@ jobs:
           body: |
             Automatically generated release.
 
-            SHA256 sum of combined_calendar.ics:
+            SHA256 sum:
             ${{ steps.sha256sum.outputs.sha256 }}
           draft: false
           prerelease: false
@@ -61,7 +65,3 @@ jobs:
           asset_path: WSPL_Events.ics
           asset_name: WSPL_Events.ics
           asset_content_type: application/octet-stream
-          
-      - name: Calculate SHA256 sum
-        id: sha256sum
-        run: echo "::set-output name=sha256::$(sha256sum WSPL_Events.ics | awk '{print $1}')"
