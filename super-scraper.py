@@ -11,8 +11,8 @@ print('Fetching calendar data...')
 response = requests.get(url)
 print('Calendar data received.')
 
-fixed = response.text.replace('&amp;', '&').replace("’","'")
-soup = BeautifulSoup(fixed, 'html.parser')
+# fixed = response.text.replace('&amp\;', '&').replace("’","'")
+soup = BeautifulSoup(response.text, 'html.parser')
 
 calendar_items = soup.find_all(class_='icrt-calendarListItem')
 print(str(len(calendar_items)) + " events to parse.")
@@ -39,7 +39,7 @@ for item in calendar_items:
         meta_title = item.find(class_='meta-title')
         meta_date = meta_title.get('href')[16:32].replace('-', '')
 
-        event_summary = meta_title.text
+        event_summary = meta_title.text.replace('&amp\;', '&').replace("’","'")
         event_date = datetime.strptime(meta_date, '%Y%m%d%H%M')
 
         # Convert event_date to UTC

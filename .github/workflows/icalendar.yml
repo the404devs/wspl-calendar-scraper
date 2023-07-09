@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install beautifulsoup4 requests icalendar
+          pip install beautifulsoup4 requests icalendar pytz
 
       - name: Run the script
         run: python super-scraper.py
