@@ -5,6 +5,9 @@ from datetime import datetime
 import pytz 
 from html import unescape
 
+def clean(text):
+    return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'")
+
 url = "https://calendar.wsplibrary.ca/default/List?StartDate=01/01/2021&EndDate=12/31/2030"
 latest_cal_url = "https://github.com/the404devs/wspl-calendar-scraper/releases/latest/download/WSPL_Events.ics"
 
@@ -12,8 +15,7 @@ print('Fetching calendar data...')
 response = requests.get(url)
 print('Calendar data received.')
 
-fixed = unescape(response.text).replace('\\','')
-soup = BeautifulSoup(fixed, 'html.parser')
+soup = BeautifulSoup(clean(response.text), 'html.parser')
 
 calendar_items = soup.find_all(class_='icrt-calendarListItem')
 print(str(len(calendar_items)) + " events to parse.")
@@ -21,7 +23,7 @@ print(str(len(calendar_items)) + " events to parse.")
 # Fetch the latest calendar from GitHub
 print("Pulling latest release from GitHub...")
 latest_cal_response = requests.get(latest_cal_url)
-latest_cal = Calendar.from_ical(unescape(latest_cal_response.text).replace('\\',''))
+latest_cal = Calendar.from_ical(clean(latest_cal_response.text))
 print("Latest release retrieved.")
 
 # Store event summaries and dates from the latest calendar in a set
@@ -39,7 +41,6 @@ skipped_events = []
 for item in calendar_items:
         meta_title = item.find(class_='meta-title')
         meta_date = meta_title.get('href')[16:32].replace('-', '')
-
         event_summary = meta_title.text
         event_date = datetime.strptime(meta_date, '%Y%m%d%H%M')
 
@@ -47,8 +48,6 @@ for item in calendar_items:
         local = pytz.timezone("America/Toronto")
         local_dt = local.localize(event_date, is_dst=None)
         event_date = local_dt.astimezone(pytz.utc)
-        
-        # print(str(event_date))
 
         if (event_summary, event_date) in latest_event_summaries_dates:
             # print(f"Skipping event: {event_summary}")
@@ -58,7 +57,7 @@ for item in calendar_items:
             request_counter += 1
             link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
             calendar_response = requests.get(link)
-            calendar = Calendar.from_ical(unescape(calendar_response.text).replace('\\',''))
+            calendar = Calendar.from_ical(clean(calendar_response.text))
             calendars.append(calendar)
 
 combined_calendar = Calendar()
