@@ -57,7 +57,7 @@ for item in calendar_items:
             request_counter += 1
             link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
             calendar_response = requests.get(link)
-            calendar = Calendar.from_ical(calendar_response.text.replace('&','&amp\;').replace("’","'"))
+            calendar = Calendar.from_ical(calendar_response.text.replace('&amp\;','&').replace("’","'"))
             calendars.append(calendar)
 
 combined_calendar = Calendar()
