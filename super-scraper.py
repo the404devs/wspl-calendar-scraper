@@ -6,7 +6,7 @@ import pytz
 from html import unescape
 
 def clean(text):
-    if type(text) is str:
+    if isinstance(text, str):
         return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",")
     else:
         return text
@@ -84,11 +84,17 @@ for summary, event_date in skipped_events:
                 combined_calendar.add_component(event)
                 break
 
+# Add in the freshly-pulled events from the calendar
 for calendar in calendars:
     for component in calendar.walk():
         if component.name == 'VEVENT' and component not in combined_calendar.subcomponents:
+            event = Event()
+            for property_name, property_value in component.items():
+                if property_name == 'SUMMARY':
+                    print("|"+clean(property_value)+"|")
+                event[property_name] = clean(property_value)
             fresh_totals += 1
-            combined_calendar.add_component(component)
+            combined_calendar.add_component(event)
 
 print(f"{fresh_totals} fresh events, {skipped_totals} skipped events.")
 with open('WSPL_Events.ics', 'wb') as f:
