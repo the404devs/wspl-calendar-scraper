@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from icalendar import Calendar, Event
 from datetime import datetime
 import pytz 
+from html import unescape
 
 url = "https://calendar.wsplibrary.ca/default/List?StartDate=01/01/2021&EndDate=12/31/2030"
 latest_cal_url = "https://github.com/the404devs/wspl-calendar-scraper/releases/latest/download/WSPL_Events.ics"
@@ -11,7 +12,7 @@ print('Fetching calendar data...')
 response = requests.get(url)
 print('Calendar data received.')
 
-fixed = response.text.replace('&amp\;', '&').replace("’","'")
+fixed = unescape(response.text).replace('\\','')
 soup = BeautifulSoup(fixed, 'html.parser')
 
 calendar_items = soup.find_all(class_='icrt-calendarListItem')
@@ -20,7 +21,7 @@ print(str(len(calendar_items)) + " events to parse.")
 # Fetch the latest calendar from GitHub
 print("Pulling latest release from GitHub...")
 latest_cal_response = requests.get(latest_cal_url)
-latest_cal = Calendar.from_ical(latest_cal_response.text)
+latest_cal = Calendar.from_ical(unescape(latest_cal_response.text).replace('\\',''))
 print("Latest release retrieved.")
 
 # Store event summaries and dates from the latest calendar in a set
@@ -57,7 +58,7 @@ for item in calendar_items:
             request_counter += 1
             link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
             calendar_response = requests.get(link)
-            calendar = Calendar.from_ical(calendar_response.text.replace('&amp\;','&').replace("’","'"))
+            calendar = Calendar.from_ical(unescape(calendar_response.text).replace('\\',''))
             calendars.append(calendar)
 
 combined_calendar = Calendar()
