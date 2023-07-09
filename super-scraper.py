@@ -6,7 +6,10 @@ import pytz
 from html import unescape
 
 def clean(text):
-    return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'")
+    if type(text) is str:
+        return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",")
+    else:
+        return text
 
 url = "https://calendar.wsplibrary.ca/default/List?StartDate=01/01/2021&EndDate=12/31/2030"
 latest_cal_url = "https://github.com/the404devs/wspl-calendar-scraper/releases/latest/download/WSPL_Events.ics"
@@ -41,7 +44,7 @@ skipped_events = []
 for item in calendar_items:
         meta_title = item.find(class_='meta-title')
         meta_date = meta_title.get('href')[16:32].replace('-', '')
-        event_summary = meta_title.text
+        event_summary = clean(meta_title.text)
         event_date = datetime.strptime(meta_date, '%Y%m%d%H%M')
 
         # Convert event_date to UTC
@@ -76,7 +79,7 @@ for summary, event_date in skipped_events:
             if component.get('summary') == summary and component.get('dtstart').dt == event_date:
                 event = Event()
                 for property_name, property_value in component.items():
-                    event[property_name] = property_value
+                    event[property_name] = clean(property_value)
                 skipped_totals += 1
                 combined_calendar.add_component(event)
                 break
