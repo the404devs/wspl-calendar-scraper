@@ -33,7 +33,7 @@ print("Latest release retrieved.")
 latest_event_summaries_dates = set()
 for component in latest_cal.walk():
     if component.name == 'VEVENT':
-        summary = component.get('summary')
+        summary = clean(component.get('summary'))
         event_date = component.get('dtstart').dt
         # print(str(event_date))
         latest_event_summaries_dates.add((summary, event_date))
