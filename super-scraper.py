@@ -7,7 +7,7 @@ from html import unescape
 
 def clean(text):
     if isinstance(text, str):
-        return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",")
+        return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",").replace("–","-")
     else:
         return text
 
@@ -34,8 +34,7 @@ latest_event_summaries_dates = set()
 for component in latest_cal.walk():
     if component.name == 'VEVENT':
         summary = clean(component.get('summary'))
-        event_date = component.get('dtstart').dt
-        # print(str(event_date))
+        event_date = clean(component.get('dtstart').dt)
         latest_event_summaries_dates.add((summary, event_date))
 
 request_counter = 1
@@ -51,12 +50,11 @@ for item in calendar_items:
         local = pytz.timezone("America/Toronto")
         local_dt = local.localize(event_date, is_dst=None)
         event_date = local_dt.astimezone(pytz.utc)
-
         if (event_summary, event_date) in latest_event_summaries_dates:
             # print(f"Skipping event: {event_summary}")
             skipped_events.append((event_summary, event_date))
         else:
-            print(f"Pulling event: {event_summary}")
+            print(f"Pulling event: |{event_summary}|")
             request_counter += 1
             link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
             calendar_response = requests.get(link)
@@ -104,3 +102,4 @@ print('Complete!')
 # Print the number of events in the combined calendar
 num_events_combined = sum(1 for _ in combined_calendar.walk() if _.name == 'VEVENT')
 print(f'Number of events in combined_calendar: {num_events_combined}')
+
