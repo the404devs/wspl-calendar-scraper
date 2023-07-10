@@ -88,8 +88,6 @@ for calendar in calendars:
         if component.name == 'VEVENT' and component not in combined_calendar.subcomponents:
             event = Event()
             for property_name, property_value in component.items():
-                if property_name == 'SUMMARY':
-                    print("|"+clean(property_value)+"|")
                 event[property_name] = clean(property_value)
             fresh_totals += 1
             combined_calendar.add_component(event)
