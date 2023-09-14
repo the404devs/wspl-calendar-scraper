@@ -31,7 +31,7 @@ jobs:
         
       - name: Calculate SHA256 sum
         id: sha256sum
-        run: echo "HASH=$(sha256sum WSPL_Events.ics | awk '{print $1}') >> $GITHUB_ENV"
+        run: echo "HASH=$(sha256sum WSPL_Events.ics | awk '{print $1}')" >> $GITHUB_ENV
 
       - name: Create release
         id: create_release
