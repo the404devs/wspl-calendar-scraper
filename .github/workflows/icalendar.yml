@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: set env
+      - name: Set Environment Variables
         run: echo "NOW=$(date +'%Y.%m.%d_%H.%M')" >> $GITHUB_ENV
         
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
         
       - name: Calculate SHA256 sum
         id: sha256sum
-        run: echo "::set-output name=sha256::$(sha256sum WSPL_Events.ics | awk '{print $1}')"
+        run: echo "HASH=$(sha256sum WSPL_Events.ics | awk '{print $1}') >> $GITHUB_ENV"
 
       - name: Create release
         id: create_release
@@ -45,7 +45,7 @@ jobs:
             Automatically generated release.
 
             SHA256 sum:
-            ${{ steps.sha256sum.outputs.sha256 }}
+            ${{ env.HASH }}
           draft: false
           prerelease: false
 
