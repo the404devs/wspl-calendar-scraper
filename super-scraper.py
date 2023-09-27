@@ -54,7 +54,7 @@ for item in calendar_items:
             # print(f"Skipping event: {event_summary}")
             skipped_events.append((event_summary, event_date))
         else:
-            print(f"Pulling event: |{event_summary}|")
+            print(f"Pulling event: |{event_summary}|{event_date}|")
             request_counter += 1
             link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
             calendar_response = requests.get(link)
