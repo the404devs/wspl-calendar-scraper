@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from icalendar import Calendar, Event
-from datetime import datetime
+from datetime import datetime, timedelta, date
 import pytz 
 from html import unescape
 
@@ -11,8 +11,19 @@ def clean(text):
     else:
         return text
 
-url = "https://calendar.wsplibrary.ca/default/List?StartDate=01/01/2021&EndDate=12/31/2030"
+today = date.today()
+
+# Help stop calendar abuse. Only pull events within a reasonable time frame.
+start_date = (today - timedelta(days=365)).strftime("%m/%d/%Y")
+end_date = (today + timedelta(days=365)).strftime("%m/%d/%Y")
+
+print("Starting from: " + start_date)
+print("Ending at: " + end_date)
+
+url = "https://calendar.wsplibrary.ca/default/List?StartDate=" + start_date + "&EndDate=" + end_date
 latest_cal_url = "https://github.com/the404devs/wspl-calendar-scraper/releases/latest/download/WSPL_Events.ics"
+
+print("Target URL: " + url)
 
 print('Fetching calendar data...')
 response = requests.get(url)
