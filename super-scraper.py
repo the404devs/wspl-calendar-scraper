@@ -17,6 +17,7 @@ today = date.today()
 start_date = (today - timedelta(days=365)).strftime("%m/%d/%Y")
 end_date = (today + timedelta(days=365)).strftime("%m/%d/%Y")
 
+
 print("Starting from: " + start_date)
 print("Ending at: " + end_date)
 
@@ -46,30 +47,35 @@ for component in latest_cal.walk():
     if component.name == 'VEVENT':
         summary = clean(component.get('summary'))
         event_date = clean(component.get('dtstart').dt)
-        latest_event_summaries_dates.add((summary, event_date))
+        event_link = clean(component.get('url'))
+        latest_event_summaries_dates.add((summary, event_date, event_link))
 
 request_counter = 1
 calendars = []
 skipped_events = []
 for item in calendar_items:
         meta_title = item.find(class_='meta-title')
-        meta_date = meta_title.get('href')[16:32].replace('-', '')
+        meta_url = meta_title.get('href')
+        meta_date = meta_url[16:32].replace('-', '')
         event_summary = clean(meta_title.text)
         event_date = datetime.strptime(meta_date, '%Y%m%d%H%M')
+        event_link = "https://calendar.wsplibrary.ca" + meta_title.get('href')
 
         # Convert event_date to UTC
         local = pytz.timezone("America/Toronto")
         local_dt = local.localize(event_date, is_dst=None)
         event_date = local_dt.astimezone(pytz.utc)
-        if (event_summary, event_date) in latest_event_summaries_dates:
+        if (event_summary, event_date, event_link) in latest_event_summaries_dates:
             # print(f"Skipping event: {event_summary}")
-            skipped_events.append((event_summary, event_date))
+            skipped_events.append((event_summary, event_date, event_link))
         else:
             print(f"Pulling event: |{event_summary}|{event_date}|")
             request_counter += 1
-            link = "https://calendar.wsplibrary.ca" + meta_title.get('href').replace('/Detail/', '/Calendar/')
-            calendar_response = requests.get(link)
+            ical_link = event_link.replace('/Detail/', '/Calendar/')
+            calendar_response = requests.get(ical_link)
             calendar = Calendar.from_ical(clean(calendar_response.text))
+            event = calendar.walk()[1]
+            event['url'] = event_link
             calendars.append(calendar)
 
 combined_calendar = Calendar()
@@ -82,10 +88,10 @@ fresh_totals = 0
 skipped_totals = 0
 
 # Add skipped events from the latest release to the combined calendar
-for summary, event_date in skipped_events:
+for summary, event_date, event_link in skipped_events:
     for component in latest_cal.walk():
         if component.name == 'VEVENT':
-            if component.get('summary') == summary and component.get('dtstart').dt == event_date:
+            if component.get('summary') == summary and component.get('dtstart').dt == event_date and component.get('url') == event_link:
                 event = Event()
                 for property_name, property_value in component.items():
                     event[property_name] = clean(property_value)
