@@ -174,7 +174,8 @@ print(f'Number of events that couldn\'t be pulled: {len(bad_events)}')
 
 if (len(bad_events) > 0):
     with open("seemingly-broken-events.txt", "w") as f:
-        f.write("Broken Event Page Report at " + datetime.today().strftime('%Y-%m-%d %H:%M:%S') + "\n")
-        f.write("The following event pages are probably broken (that's bad):\n\n")
+        f.write("Broken Event Page Report at " + datetime.today().strftime('%Y-%m-%d %H:%M:%S') + "UTC\n")
+        f.write("The following event pages are probably broken (that's bad):\n")
+        f.write("Most likely causes are: event url without date/time, causing events with the same name to have the same url:\n\n")
         for url in bad_events:
             f.write(url + "\n")
