@@ -57,24 +57,20 @@ jobs:
           draft: false
           prerelease: false
 
-#       - name: Upload iCalendar file
-#         id: upload_file
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: icalendar
-#           path: WSPL_Events.ics
-#
-#       - name: Attach iCalendar file to release
-#         uses: actions/upload-release-asset@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           upload_url: ${{ steps.create_release.outputs.upload_url }}
-#           asset_path: WSPL_Events.ics
-#           asset_name: WSPL_Events.ics
-#           asset_content_type: application/octet-stream
+      - name: Upload iCalendar file
+        id: upload_ical
+        uses: actions/upload-artifact@v2
+        with:
+          name: icalendar
+          path: WSPL_Events.ics
 
 
+      - name: Upload report file
+        id: upload_report
+        uses: actions/upload-artifact@v2
+        with:
+          name: report
+          path: seemingly-broken-events.txt
 
       - name: Upload iCal File to Release
         uses: actions/upload-release-asset@v1
