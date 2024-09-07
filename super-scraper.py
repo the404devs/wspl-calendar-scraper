@@ -179,3 +179,7 @@ if (len(bad_events) > 0):
         f.write("Most likely causes are: event url without date/time, causing events with the same name to have the same url:\n\n")
         for url in bad_events:
             f.write(url + "\n")
+else:
+    with open("seemingly-broken-events.txt", "w") as f:
+        f.write("Broken Event Page Report at " + datetime.today().strftime('%Y-%m-%d %H:%M:%S') + "UTC\n")
+        f.write("All is well. No problems, this time.")
