@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload iCalendar file
         id: upload_ical
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: icalendar
           path: WSPL_Events.ics
@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload report file
         id: upload_report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: broken-events-report
           path: seemingly-broken-events.txt
