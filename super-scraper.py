@@ -7,7 +7,7 @@ from html import unescape
 
 def clean(text):
     if isinstance(text, str):
-        return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",").replace("–","-").replace("Ã©", "é")
+        return unescape(text).strip().replace('\\','').replace('â', '-').replace('’', "'").replace("Ã¢ÂÂ", "-").replace("â", "'").replace("\\,", ",").replace("–","-").replace("Ã©", "é").replace("Ã", "É")
     else:
         return text
 
