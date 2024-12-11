@@ -1,8 +1,8 @@
 name: Periodic iCalendar Generation
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # Schedule to run every day at midnight (UTC)
+  # schedule:
+  #   - cron: '0 0 * * *' # Schedule to run every day at midnight (UTC)
   workflow_dispatch: {}
 
 jobs:
